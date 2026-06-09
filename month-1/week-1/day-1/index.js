@@ -8,9 +8,9 @@ console.log("My country is: "+ myCountry);
 console.log("The internet status is: "+ internetStatus);
 
 // This code demonstrates the use of a ternary operator to assign a function based on a condition.
-let aNumber = 10;
-let sampleFunction = (aNumber > 10) ? () => console.log("The number is greater than 10") : () => console.log("The number is smaller or equal to 10");
-sampleFunction();
+let aNumber = 22;
+let sampleFunction = (number) => { return number * number};
+console.log(sampleFunction(aNumber));
 
 // This code demonstrates the use of an object to store multiple related properties and values.
 let myStatus = {
@@ -42,4 +42,24 @@ let calculateTeamWinrate = (teamTotalMatches, teamtotalVictories) => (teamtotalV
 let sampleTeamTotalMatches = 31;
 let sampleTeamTotalVictories = 20;
 console.log("This sample team winrate is: "+calculateTeamWinrate(sampleTeamTotalMatches, sampleTeamTotalVictories) + "%");
-//console.log("The team's win rate is: " + calculateTeamWinrate(teamTotalMatches, teamtotalVictories) + "%");
+
+let playerDetails = {
+    name: "SerZero",
+    stats: {
+        totalMatches: 100,
+        totalWins: 60,
+        totalLosses: 40
+    },
+    calculateWinrate(){
+        let temp = (this.stats.totalWins / this.stats.totalLosses);
+        console.log("Player Kill/Death ratio is: " + temp );
+        return temp;
+    },
+    printBadgeBasedOnWinrate(){
+        return (this.calculateWinrate() > 1.5) ? "Pro" : "Noob";
+    }
+        
+}
+console.log("Player name: " + playerDetails.name);
+console.log("Player badge: " + playerDetails.printBadgeBasedOnWinrate());
+
