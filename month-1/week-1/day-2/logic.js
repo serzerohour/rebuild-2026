@@ -137,6 +137,8 @@ const individualRegistrations = [];
 
 
 const isPlayerMemberOfTeam = (playerId, teamId) => {
+
+    /* Old version
     let found = false;
 
     for (let index = 0; index < memberships.length; index++) {
@@ -153,10 +155,14 @@ const isPlayerMemberOfTeam = (playerId, teamId) => {
         }
     }
     return found;
+    */
+    // New version
+    return result = memberships.some(m => m.playerId == playerId && m.teamId == teamId);
 }
 
 const isCaptain = (teamId, playerId) => {
 
+    /* Old version
     for (let index = 0; index < teams.length; index++) {
         const teamObject = teams[index];
 
@@ -171,35 +177,53 @@ const isCaptain = (teamId, playerId) => {
 
     }
     return false;
+    */
+    // New version
+    const isCaptainExist = teams.find(t => t.teamId == teamId && t.teamCaptainId == playerId);
+    if(isCaptainExist){
+        return true;
+    }else{
+        return false;
+    }
 
 }
 
+//if (isCaptainExist)return true;
+//else return false;
+
+
+
+
 const isPlayerAlreadyInEventRoster = (playerId, eventId) => {
-        
+
+    /* old version
     for (let index = 0; index < rosters.length; index++) {
-        const rosterObject = rosters[index];        
+        const rosterObject = rosters[index];
         for (const key in rosterObject) {
-           
+
             if (rosterObject[key] == playerId && rosterObject['eventId'] == eventId) {
                 return true;
             }
-            
+
 
         }
     }
     return false;
+    */
+   // New version
+    return result = rosters.some(r => r.playerId == playerId && r.eventId == eventId);
 
 
 }
-const isPlayerRegisteredIndividual= (playerId, eventId) =>{
-     for (let index = 0; index < individualRegistrations.length; index++) {
-        const individualObject = individualRegistrations[index];        
+const isPlayerRegisteredIndividual = (playerId, eventId) => {
+    for (let index = 0; index < individualRegistrations.length; index++) {
+        const individualObject = individualRegistrations[index];
         for (const key in individualObject) {
-           
+
             if (individualObject[key] == playerId && individualObject['eventId'] == eventId) {
                 return true;
             }
-            
+
 
         }
     }
@@ -207,13 +231,13 @@ const isPlayerRegisteredIndividual= (playerId, eventId) =>{
 }
 
 
-const getEventType = (eventID) =>{
+const getEventType = (eventID) => {
     for (let index = 0; index < events.length; index++) {
         const eventObject = events[index];
         for (const key in eventObject) {
-            if (eventObject[key] == eventID) return eventObject['eventType'];            
+            if (eventObject[key] == eventID) return eventObject['eventType'];
         }
-        
+
     }
     return false;
 }
@@ -267,19 +291,19 @@ const selectPlayerForRoster = (captainId, playerId, teamId, eventId) => {
 const registerPlayerIndividually = (playerId, eventId) => {
 
 
-    if(getEventType(eventId) !== "individual" && getEventType(eventId) !== false ){
-            console.log("This event requires team registration");
+    if (getEventType(eventId) !== "individual" && getEventType(eventId) !== false) {
+        console.log("This event requires team registration");
 
-         }
-    else if(isPlayerRegisteredIndividual(playerId, eventId)){
-            console.log("Already registered");
-        }
-    else{
+    }
+    else if (isPlayerRegisteredIndividual(playerId, eventId)) {
+        console.log("Already registered");
+    }
+    else {
         individualRegistrations.push({ playerId, eventId });
-        
+
         console.log(`Player ${findEntityNameById(playerId, "player")} registered for ${findEntityNameById(eventId, "event")}`);
     }
-    
+
 }
 
 
@@ -287,32 +311,32 @@ const registerPlayerIndividually = (playerId, eventId) => {
 // Now time to backtest it with Arena requests
 // Case 1:  Ali (captain of ZeroHour) selects Reza for Iran Dota Championship
 console.log("Case 1: \n")
-selectPlayerForRoster(1,2,1,1);
+selectPlayerForRoster(1, 2, 1, 1);
 
 // Case 2: Nima (captain of ShadowStrike) selects Reza for Iran Dota Championship
 console.log("Case 2: \n");
-selectPlayerForRoster(4,2,2,1);
+selectPlayerForRoster(4, 2, 2, 1);
 
 // Case 3: Nima (captain of ShadowStrike) selects Reza for CS Masters League
 console.log("Case 3: \n");
-selectPlayerForRoster(4,2,2,2);
+selectPlayerForRoster(4, 2, 2, 2);
 
 // Case 4: Ali tries to select Kaveh for Iran Dota Championship
 console.log("Case 4: \n");
-selectPlayerForRoster(1,6,1,1);
+selectPlayerForRoster(1, 6, 1, 1);
 
 // Case 5: Reza (not captain) tries to select Sara for ZeroHour
 console.log("Case 5: \n");
-selectPlayerForRoster(2,3,1,1);
+selectPlayerForRoster(2, 3, 1, 1);
 
 // Case 6: Register Ali individually for CoD FFA Night
 console.log("Case 6: \n");
-registerPlayerIndividually(1,3);
+registerPlayerIndividually(1, 3);
 
 // Case 7: Register Ali individually for Iran Dota Championship
 console.log("Case 7: \n");
-registerPlayerIndividually(1,1);
+registerPlayerIndividually(1, 1);
 
 // Case 8: Register Ali individually for CoD FFA Night again
 console.log("Case 8: \n");
-registerPlayerIndividually(1,3);
+registerPlayerIndividually(1, 3);
