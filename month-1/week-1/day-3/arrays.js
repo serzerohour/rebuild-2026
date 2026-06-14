@@ -77,8 +77,6 @@ const getAvailablePlayersForEvent = (teamId, eventId) => {
     const teamMembers = getTeamMembers(teamId);
     return teamMembers.filter(tm => !confirmedRosters.some(cR => cR.playerId === tm.playerId));
 
-
-
 }
 //echo(getAvailablePlayersForEvent(2, 1));
 

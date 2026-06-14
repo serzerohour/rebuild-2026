@@ -235,33 +235,6 @@ const isPlayerRegisteredIndividual = (playerId, eventId) => {
 
 }
 
-const findEntityNameById = (entityId, entityType) => {
-    let entityNewArray = [];
-    let fieldName = "";
-    switch (entityType) {
-        case "player":
-            entityNewArray = players;
-            fieldName = "playerName";
-            break;
-        case "team":
-            entityNewArray = teams;
-            fieldName = "teamName";
-            break;
-        case "event":
-            entityNewArray = events;
-            fieldName = "eventName";
-    }
-
-    for (let index = 0; index < entityNewArray.length; index++) {
-        const entitySelectedObject = entityNewArray[index];
-        for (const key in entitySelectedObject) {
-            if (entitySelectedObject[key] == entityId)
-                return entitySelectedObject[fieldName];
-        }
-
-    }
-    return false;
-}
 // captainId, playerId, teamId, eventID
 const selectPlayerForRoster = (captainId, playerId, teamId, eventId) => {
     if (!isCaptain(teamId, captainId)) {
