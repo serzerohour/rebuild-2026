@@ -36,3 +36,11 @@ Build FindMatch V3: a real-time esports event platform.
 - Structure: data/mockData.js + modules/players.js + modules/teams.js + modules/events.js + modules/rosters.js + index.js
 - Biggest insight: real backends separate logic by domain, not by putting everything in one file
 - All tests passing
+
+#### Day 5 — Async JavaScript
+- Topics: Promise, async, await, try/catch/finally, throw new Error
+- Built: async player service and async roster selection flow
+- Tested:
+  - failure case: blocked already registered player
+  - success case: confirmed valid player
+- Biggest insight: async functions return Promises, and forgetting await causes [object Promise]
