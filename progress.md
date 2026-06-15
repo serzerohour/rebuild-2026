@@ -38,7 +38,6 @@ Build FindMatch V3: a real-time esports event platform.
 - All tests passing
 
 #### Day 5 — Async JavaScript
-#### Day 5 — Async JavaScript
 - Topics: Promise, async, await, try/catch/finally, throw new Error, Promise.all
 - Built:
   - playerService.js (async player lookup)
@@ -51,3 +50,14 @@ Build FindMatch V3: a real-time esports event platform.
   - console.log instead of throw for errors
   - validation order (validate before fetch)
 - Biggest insight: async functions must throw errors, not just log them
+
+#### Day 6 — File Persistence
+- Topics: fs/promises, readFile, writeFile, JSON.parse, JSON.stringify, ENOENT error handling
+- Built:
+  - fileService.js (loadData, saveData)
+  - rosterService.js (file-based roster selection)
+  - JSON data files for all entities
+- Tests:
+  - First run: player added successfully
+  - Second run: duplicate correctly rejected
+- Key insight: Data now survives program restart - this is real persistence
