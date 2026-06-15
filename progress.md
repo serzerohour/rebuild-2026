@@ -38,9 +38,16 @@ Build FindMatch V3: a real-time esports event platform.
 - All tests passing
 
 #### Day 5 — Async JavaScript
-- Topics: Promise, async, await, try/catch/finally, throw new Error
-- Built: async player service and async roster selection flow
-- Tested:
-  - failure case: blocked already registered player
-  - success case: confirmed valid player
-- Biggest insight: async functions return Promises, and forgetting await causes [object Promise]
+#### Day 5 — Async JavaScript
+- Topics: Promise, async, await, try/catch/finally, throw new Error, Promise.all
+- Built:
+  - playerService.js (async player lookup)
+  - rosterService.js (async roster selection with validation)
+  - findEntityNameByIdAsync helper
+- Tests: 7/7 passing
+- Key bugs fixed:
+  - delay not returning Promise
+  - wrong field lookup in helper
+  - console.log instead of throw for errors
+  - validation order (validate before fetch)
+- Biggest insight: async functions must throw errors, not just log them
