@@ -1,0 +1,5 @@
+[
+    { "teamId": 1, "teamName": "ZeroHour", "teamCaptainId": 1 },
+    { "teamId": 2, "teamName": "ShadowStrike", "teamCaptainId": 4 },
+    { "teamId": 3, "teamName": "IronWolves", "teamCaptainId": 6 }
+]

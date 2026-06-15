@@ -1,0 +1,5 @@
+[
+    { "eventId": 1, "eventName": "Iran Dota Championship", "gameId": 1, "eventEligibleParticipants": "team" },
+    { "eventId": 2, "eventName": "CS Masters League", "gameId": 2, "eventEligibleParticipants": "team" },
+    { "eventId": 3, "eventName": "CoD FFA Night", "gameId": 3, "eventEligibleParticipants": "individual" }
+]
