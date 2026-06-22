@@ -1,7 +1,8 @@
 import express from 'express';
 import { loadData } from './services/fileService.js';
 import { selectPlayerForRosterAsync, getAllRosters } from './services/rosterService.js';
-import { getTeamById, getTeamWithMembers, getAllTeams} from './services/teamService.js';
+import { getTeamById, getTeamWithMembers, getAllTeams } from './services/teamService.js';
+import { getEventRosterWithDetails } from './services/eventService.js';
 
 
 const app = express();
@@ -89,6 +90,31 @@ app.get('/api/teams/:teamId/members', async (req, res) => {
     }
 
 });
+
+// Get rosters info of a specific event
+app.get('/api/events/:eventId/roster', async (req, res) => {
+    // your code here
+    try {
+        const requestedEventId = parseInt(req.params.eventId);
+
+        if (isNaN(requestedEventId)) {
+            return res.status(400).json({ error: 'event id is not a valid number' });
+        }
+
+        const eventAndRosterResult = await getEventRosterWithDetails(requestedEventId);
+        res.status(200).json(eventAndRosterResult);
+    }
+    catch (error) {
+        if (error.message.includes("No such event") || error.message.includes("No roster")) {
+            res.status(404).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: error.message });
+        }
+
+    }
+
+});
+
 
 // Select(register) a player for a roster
 app.post('/api/rosters/select', async (req, res) => {
