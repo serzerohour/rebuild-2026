@@ -1,0 +1,55 @@
+PRAGMA foreign_keys = ON;
+DROP TABLE IF EXISTS rosters;
+DROP TABLE IF EXISTS memberships;
+DROP TABLE IF EXISTS events;
+DROP TABLE IF EXISTS teams;
+DROP TABLE IF EXISTS games;
+DROP TABLE IF EXISTS players;
+
+
+
+CREATE TABLE players(
+    playerId INTEGER PRIMARY KEY AUTOINCREMENT,
+    playerName TEXT NOT NULL,
+    playerEmail TEXT NOT NULL UNIQUE,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE teams(
+    teamId INTEGER PRIMARY KEY AUTOINCREMENT,
+    teamName text NOT NULL UNIQUE,
+    teamCaptainId INTEGER REFERENCES players(playerId) ON DELETE SET NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE games(
+    gameId INTEGER PRIMARY KEY AUTOINCREMENT,
+    gameName TEXT NOT NULL UNIQUE,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE events(
+    eventId INTEGER PRIMARY KEY AUTOINCREMENT,
+    eventName TEXT NOT NULL UNIQUE,
+    gameId INTEGER NOT NULL REFERENCES games(gameId) ON DELETE RESTRICT,
+    eventEligibleParticipants TEXT NOT NULL CHECK(eventEligibleParticipants IN ('team','individual')),
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE memberships(
+    membershipId INTEGER PRIMARY KEY AUTOINCREMENT,
+    playerId INTEGER NOT NULL REFERENCES players(playerId) ON DELETE CASCADE,
+    teamId INTEGER NOT NULL REFERENCES teams(teamId) ON DELETE CASCADE,
+    joined_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    left_at TEXT DEFAULT NULL
+);
+CREATE UNIQUE INDEX idx_active_membership ON memberships(playerId,teamId) WHERE left_at IS NULL;
+
+CREATE TABLE rosters (
+    rosterId INTEGER PRIMARY KEY AUTOINCREMENT,
+    playerId INTEGER NOT NULL REFERENCES players(playerId) ON DELETE RESTRICT,
+    teamId INTEGER NOT NULL REFERENCES teams(teamId) ON DELETE RESTRICT,
+    eventId INTEGER NOT NULL REFERENCES events(eventId) ON DELETE RESTRICT,
+    registered_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    withdrawn_at TEXT DEFAULT NULL
+);
+
+CREATE UNIQUE INDEX idx_active_roster_per_event
+ON rosters(playerId, eventId)
+WHERE withdrawn_at IS NULL;

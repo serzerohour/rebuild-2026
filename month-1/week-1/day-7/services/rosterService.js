@@ -3,9 +3,7 @@ import { DATA_PATH } from "./config.js";
 
 export const selectPlayerForRosterAsync = async (captainId, playerId, teamId, eventId) => {
 
-    if(captainId == undefined || playerId == undefined || teamId == undefined || eventId == undefined){
-        throw new Error("Some data has not defined!");
-    }
+   
     //Load data
     const teams = await loadData(DATA_PATH.teams);
     const memberships = await loadData(DATA_PATH.memberships);
