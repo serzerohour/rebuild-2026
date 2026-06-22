@@ -61,3 +61,19 @@ Build FindMatch V3: a real-time esports event platform.
   - First run: player added successfully
   - Second run: duplicate correctly rejected
 - Key insight: Data now survives program restart - this is real persistence
+
+Day 7 & 8 Day 8 deliverables:
+
+✅ 4 new endpoints (/api/teams, /api/teams/:teamId, /api/teams/:teamId/members, /api/events/:eventId/roster)
+✅ 1 endpoint refactored to service layer (/api/teams and /api/rosters)
+✅ 2 new service files (teamService.js, eventService.js) — wait, you had teamService — so 1 new (eventService.js)
+✅ URL parameter parsing with req.params
+✅ Input validation with isNaN guard clauses
+✅ Proper HTTP status codes (200, 400, 404, 500)
+✅ Multi-file data joins (.filter().map().find() patterns)
+✅ Nested response shapes (event metadata + nested player array)
+✅ Distinguishing "not found" (404) vs "empty result" (200 with [])
+✅ Created a utils/helper.js on your own initiative
+✅ Debugged a server-hang bug (forgot res.json)
+✅ Debugged a missing await async bug
+✅ Pushed back when my feedback didn't fit your context
