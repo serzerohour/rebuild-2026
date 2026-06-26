@@ -1,5 +1,5 @@
 import { loadData, saveData } from "./fileService.js";
-import { DATA_PATH } from "./config.js";
+import { DATA_PATH } from "../config.js";
 
 const selectPlayerForRosterAsync = async (captainId, playerId, teamId, eventId) => {
 

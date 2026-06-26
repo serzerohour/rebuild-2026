@@ -1,11 +1,11 @@
 [
-    { "playerId": 1, "teamId": 1 },
-    { "playerId": 2, "teamId": 1 },
-    { "playerId": 3, "teamId": 1 },
-    { "playerId": 2, "teamId": 2 },
-    { "playerId": 4, "teamId": 2 },
-    { "playerId": 5, "teamId": 2 },
-    { "playerId": 5, "teamId": 3 },
-    { "playerId": 6, "teamId": 3 },
-    { "playerId": 3, "teamId": 3 }
+    { "membershipId" : 1, "playerId": 1, "teamId": 1, "joined_at": "2026-06-26 08:45:12", "left_at": null },
+    { "membershipId" : 2, "playerId": 2, "teamId": 1, "joined_at": "2026-06-26 08:45:12", "left_at": null  },
+    { "membershipId" : 3, "playerId": 3, "teamId": 1, "joined_at": "2026-06-26 08:45:12", "left_at": null  },
+    { "membershipId" : 4, "playerId": 2, "teamId": 2, "joined_at": "2026-06-26 08:45:12", "left_at": null  },
+    { "membershipId" : 5, "playerId": 4, "teamId": 2, "joined_at": "2026-06-26 08:45:12", "left_at": null  },
+    { "membershipId" : 6, "playerId": 5, "teamId": 2, "joined_at": "2026-06-26 08:45:12", "left_at": null  },
+    { "membershipId" : 7, "playerId": 5, "teamId": 3, "joined_at": "2026-06-26 08:45:12", "left_at": null  },
+    { "membershipId" : 8, "playerId": 6, "teamId": 3, "joined_at": "2026-06-26 08:45:12", "left_at": null  },
+    { "membershipId" : 9, "playerId": 3, "teamId": 3, "joined_at": "2026-06-26 08:45:12", "left_at": null  }
 ]

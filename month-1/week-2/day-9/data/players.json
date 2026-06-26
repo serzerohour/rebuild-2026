@@ -1,8 +1,8 @@
 [
-    { "playerId": 1, "playerName": "Ali", "email": "ali@fm.com" },
-    { "playerId": 2, "playerName": "Reza", "email": "reza@fm.com" },
-    { "playerId": 3, "playerName": "Sara", "email": "sara@fm.com" },
-    { "playerId": 4, "playerName": "Nima", "email": "nima@fm.com" },
-    { "playerId": 5, "playerName": "Darya", "email": "darya@fm.com" },
-    { "playerId": 6, "playerName": "Kaveh", "email": "kaveh@fm.com" }
+    { "playerId": 1, "playerName": "Ali", "playerEmail": "ali@fm.com" },
+    { "playerId": 2, "playerName": "Reza", "playerEmail": "reza@fm.com" },
+    { "playerId": 3, "playerName": "Sara", "playerEmail": "sara@fm.com" },
+    { "playerId": 4, "playerName": "Nima", "playerEmail": "nima@fm.com" },
+    { "playerId": 5, "playerName": "Darya", "playerEmail": "darya@fm.com" },
+    { "playerId": 6, "playerName": "Kaveh", "playerEmail": "kaveh@fm.com" }
 ]

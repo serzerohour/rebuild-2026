@@ -1,16 +1,47 @@
-import Database from "better-sqlite3";
+import { getDB, startDB } from "./dbConnect.js";
 
-const db = new Database('./db/findmatch.db');
+startDB();
+const db = getDB();
 
-console.log("📋 Tables in the database:");
+let result = db.prepare(`
+    SELECT COUNT(*) AS count FROM players
+    `);
+    
+    console.table(result.get());
 
-const tables = db.prepare(`
-    SELECT name
-    FROM sqlite_master
-    WHERE type = 'table'
-    AND name NOT LIKE 'sqlite_%'
 
-`).all();
-console.table(tables);
+    result = db.prepare(`
+    SELECT COUNT(*) AS count FROM teams
+    `);
+    
+    console.table(result.get());
 
-db.close();
+    result = db.prepare(`
+    SELECT COUNT(*) AS count FROM games
+    `);
+    
+    console.table(result.get());
+
+    result = db.prepare(`
+    SELECT COUNT(*) AS count FROM events
+    `);
+    
+    console.table(result.get());
+
+    result = db.prepare(`
+    SELECT COUNT(*) AS count FROM memberships
+    `);
+    
+    console.table(result.get());
+
+    result = db.prepare(`
+    SELECT COUNT(*) AS count FROM rosters
+    `);
+    
+    console.table(result.get());
+
+
+
+
+
+    

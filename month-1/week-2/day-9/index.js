@@ -3,10 +3,14 @@ import { loadData } from './services/fileService.js';
 import { selectPlayerForRosterAsync, getAllRosters } from './services/rosterService.js';
 import { getTeamById, getTeamWithMembers, getAllTeams } from './services/teamService.js';
 import { getEventRosterWithDetails } from './services/eventService.js';
+import { seedAllData } from './db/seed.js';
+import { startDB } from './db/dbConnect.js';
 
 
 const app = express();
 const PORT = 3000;
+
+startDB();
 
 // Middleware: parse JSON bodies  from POST requests
 
@@ -132,6 +136,23 @@ app.post('/api/rosters/select', async (req, res) => {
         res.status(400).json({ error: error.message });
 
     }
+});
+
+app.post('/api/database/insert/:securityKey', async (req, res) => {
+
+    try {
+        const secuityKey = parseInt(req.params.securityKey);
+        if(secuityKey !== 321) return res.status(401).json({error: `Unauthorized access!`});
+        await seedAllData();
+        res.status(200).json({message: `All json files got insert to database.`});
+
+    }
+    catch (error) {
+        console.log("Haaaaaaaaaa");
+        res.status(400).json({ error: error.message });
+
+    }
+
 });
 
 

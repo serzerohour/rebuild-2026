@@ -1,12 +1,19 @@
 [
   {
+    "rosterId" : 1,
     "playerId": 5,
     "teamId": 2,
-    "eventId": 1
+    "eventId": 1,
+    "registered_at":"2026-06-26 10:33:01",
+    "withdrawn_at": null
+    
   },
   {
+    "rosterId" : 2,
     "playerId": 2,
     "teamId": 1,
-    "eventId": 1
+    "eventId": 1,
+    "registered_at":"2026-06-25 09:33:01",
+    "withdrawn_at": null
   }
 ]

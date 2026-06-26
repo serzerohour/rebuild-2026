@@ -1,5 +1,5 @@
 import { loadData, saveData } from "./fileService.js";
-import { DATA_PATH } from "./config.js";
+import { DATA_PATH } from "../config.js";
 //import { delay, isEmptyArray } from "../utils/helper.js"
 
 const getTeamById = async (teamId) => {
