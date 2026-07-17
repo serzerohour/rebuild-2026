@@ -1,6 +1,6 @@
 import express from 'express';
 import { loadData } from './services/fileService.js';
-import { selectPlayerForRosterAsync, getAllRosters } from './services/rosterService.js';
+import { selectPlayerForRoster, getAllRosters } from './services/rosterService.js';
 import { getTeamById, getTeamWithMembers, getAllTeams } from './services/teamService.js';
 import { getEventRosterWithDetails } from './services/eventService.js';
 import { seedAllData } from './db/seed.js';
@@ -28,9 +28,9 @@ app.get('/api/health', (req, res) => {
 
 // Get all rosters from JSON file
 
-app.get('/api/rosters', async (req, res) => {
+app.get('/api/rosters',  (req, res) => {
     try {
-        const rosters = await getAllRosters();
+        const rosters =  getAllRosters();
         res.json(rosters);
     }
     catch (error) {
@@ -39,10 +39,10 @@ app.get('/api/rosters', async (req, res) => {
     }
 })
 
-// Get all teams
+// Get all teams with json request
+/*
 app.get('/api/teams', async (req, res) => {
     try {
-        const teams = await getAllTeams();
         res.json(teams);
     }
     catch (error) {
@@ -50,17 +50,29 @@ app.get('/api/teams', async (req, res) => {
 
     }
 });
+*/
+// Get all teams from db
+app.get('/api/teams', (req, res) => {
+    try {
+        //const teams = await getAllTeamsWithJson();
+        const teams = getAllTeams();
+        res.json(teams);
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 // Get a specific team by Id
-app.get('/api/teams/:teamId', async (req, res) => {
+app.get('/api/teams/:teamId',  (req, res) => {
     try {
         const requestTeamId = parseInt(req.params.teamId);
         if (isNaN(requestTeamId)) {
             return res.status(400).json({ error: 'Team id is not a valid number' });
         }
-        const teamData = await getTeamById(requestTeamId);
+        const teamData = getTeamById(requestTeamId);
         res.status(200).json(teamData);
-
 
     }
     catch (error) {
@@ -74,14 +86,14 @@ app.get('/api/teams/:teamId', async (req, res) => {
 });
 
 // Get all members of a specific team
-app.get('/api/teams/:teamId/members', async (req, res) => {
+app.get('/api/teams/:teamId/members', (req, res) => {
     // your code here
     try {
         const requestTeamId = parseInt(req.params.teamId);
         if (isNaN(requestTeamId)) {
             return res.status(400).json({ error: 'Team id is not a valid number' });
         }
-        const teamMembersData = await getTeamWithMembers(requestTeamId);
+        const teamMembersData = getTeamWithMembers(requestTeamId);
         res.status(200).json(teamMembersData);
     }
     catch (error) {
@@ -96,7 +108,7 @@ app.get('/api/teams/:teamId/members', async (req, res) => {
 });
 
 // Get rosters info of a specific event
-app.get('/api/events/:eventId/roster', async (req, res) => {
+app.get('/api/events/:eventId/roster',  (req, res) => {
     // your code here
     try {
         const requestedEventId = parseInt(req.params.eventId);
@@ -105,7 +117,7 @@ app.get('/api/events/:eventId/roster', async (req, res) => {
             return res.status(400).json({ error: 'event id is not a valid number' });
         }
 
-        const eventAndRosterResult = await getEventRosterWithDetails(requestedEventId);
+        const eventAndRosterResult =  getEventRosterWithDetails(requestedEventId);
         res.status(200).json(eventAndRosterResult);
     }
     catch (error) {
@@ -121,7 +133,7 @@ app.get('/api/events/:eventId/roster', async (req, res) => {
 
 
 // Select(register) a player for a roster
-app.post('/api/rosters/select', async (req, res) => {
+app.post('/api/rosters/select',  (req, res) => {
     try {
         const { captainId, playerId, teamId, eventId } = req.body;
 
@@ -129,8 +141,11 @@ app.post('/api/rosters/select', async (req, res) => {
         if (captainId === undefined || playerId === undefined || teamId === undefined || eventId === undefined) {
             return res.status(400).json({ error: 'captainId, playerId, teamId and eventId are required' });
         }
-        await selectPlayerForRosterAsync(captainId, playerId, teamId, eventId);
-        res.status(201).json({ message: 'Player added successfully to roster' });
+         let result = selectPlayerForRoster(captainId, playerId, teamId, eventId);
+        res.status(201).json({ 
+    message: 'Player added successfully to roster', 
+    data: result 
+});
     }
     catch (error) {
         res.status(400).json({ error: error.message });

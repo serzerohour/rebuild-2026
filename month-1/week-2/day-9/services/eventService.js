@@ -1,7 +1,8 @@
 import { loadData, saveData } from "./fileService.js";
 import { DATA_PATH } from "../config.js";
+import { getDB } from "../db/dbConnect.js";
 
-const getEventRosterWithDetails = async (eventId) => {
+const getEventRosterWithDetailsJson = async (eventId) => {
 
     const event = await getEventData(eventId);
     const rostersData = await loadData(DATA_PATH.rosters);
@@ -31,7 +32,30 @@ const getEventRosterWithDetails = async (eventId) => {
     };
 
 }
+const getEventRosterWithDetails = (eventId) => {
+    const db = getDB();
+    let event = getEventWithId(eventId);
+    let rostersDetail = db.prepare(`
+        SELECT * FROM  rosters r
+    INNER JOIN players p ON p.playerId = r.playerId
+    INNER JOIN teams t ON t.teamId = r.teamId
+    WHERE r.eventId = ? AND r.withdrawn_at IS NULL
+        `).all(eventId);
+    if(rostersDetail.length === 0) throw new Error("No roster found with that specific event id");   
+    return {...event, rosters: rostersDetail };
 
+};
+
+const getEventWithId = (eventId) =>{
+    const db = getDB();
+    let event = db.prepare(`
+        SELECT * FROM events
+        WHERE eventId = ?
+        `).get(eventId);
+    if(event === undefined) throw new Error("No such event with that specified id");
+    return event;  
+
+};
 
 const getEventData = async (eventId) => {
     const allEvents = await loadData(DATA_PATH.events);
