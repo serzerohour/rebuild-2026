@@ -1,10 +1,16 @@
+/*
+import { loadData } from "../services/fileService.js";
+import { DATA_PATH } from "../config.js";
+import { delay, isEmptyArray } from "../utils/helper.js";
+*/
+import 'dotenv/config';
 import express from 'express';
-import { loadData } from './services/fileService.js';
-import { selectPlayerForRoster, getAllRosters } from './services/rosterService.js';
-import { getTeamById, getTeamWithMembers, getAllTeams } from './services/teamService.js';
+import { selectPlayerForRoster, getAllRosters, kickRoster } from './services/rosterService.js';
+import { getTeamById, getTeamWithMembers, getAllTeams, kickMember } from './services/teamService.js';
 import { getEventRosterWithDetails } from './services/eventService.js';
+import { startDB, closeDB } from './db/dbConnect.js';
 import { seedAllData } from './db/seed.js';
-import { startDB } from './db/dbConnect.js';
+import { isNullishOrNaN,isValidId } from "./utils/helper.js";
 
 
 const app = express();
@@ -28,9 +34,9 @@ app.get('/api/health', (req, res) => {
 
 // Get all rosters from JSON file
 
-app.get('/api/rosters',  (req, res) => {
+app.get('/api/rosters', (req, res) => {
     try {
-        const rosters =  getAllRosters();
+        const rosters = getAllRosters();
         res.json(rosters);
     }
     catch (error) {
@@ -39,18 +45,6 @@ app.get('/api/rosters',  (req, res) => {
     }
 })
 
-// Get all teams with json request
-/*
-app.get('/api/teams', async (req, res) => {
-    try {
-        res.json(teams);
-    }
-    catch (error) {
-        res.status(500).json({ error: error.message });
-
-    }
-});
-*/
 // Get all teams from db
 app.get('/api/teams', (req, res) => {
     try {
@@ -65,10 +59,10 @@ app.get('/api/teams', (req, res) => {
 
 
 // Get a specific team by Id
-app.get('/api/teams/:teamId',  (req, res) => {
+app.get('/api/teams/:teamId', (req, res) => {
     try {
         const requestTeamId = parseInt(req.params.teamId);
-        if (isNaN(requestTeamId)) {
+        if (!isValidId(requestTeamId)) {
             return res.status(400).json({ error: 'Team id is not a valid number' });
         }
         const teamData = getTeamById(requestTeamId);
@@ -90,7 +84,7 @@ app.get('/api/teams/:teamId/members', (req, res) => {
     // your code here
     try {
         const requestTeamId = parseInt(req.params.teamId);
-        if (isNaN(requestTeamId)) {
+        if (!isValidId(requestTeamId)) {
             return res.status(400).json({ error: 'Team id is not a valid number' });
         }
         const teamMembersData = getTeamWithMembers(requestTeamId);
@@ -108,16 +102,16 @@ app.get('/api/teams/:teamId/members', (req, res) => {
 });
 
 // Get rosters info of a specific event
-app.get('/api/events/:eventId/roster',  (req, res) => {
+app.get('/api/events/:eventId/roster', (req, res) => {
     // your code here
     try {
         const requestedEventId = parseInt(req.params.eventId);
 
-        if (isNaN(requestedEventId)) {
+        if (!isValidId(requestedEventId)) {
             return res.status(400).json({ error: 'event id is not a valid number' });
         }
 
-        const eventAndRosterResult =  getEventRosterWithDetails(requestedEventId);
+        const eventAndRosterResult = getEventRosterWithDetails(requestedEventId);
         res.status(200).json(eventAndRosterResult);
     }
     catch (error) {
@@ -131,35 +125,69 @@ app.get('/api/events/:eventId/roster',  (req, res) => {
 
 });
 
-
-// Select(register) a player for a roster
-app.post('/api/rosters/select',  (req, res) => {
+// Select(register) a player for a roster DB
+app.post('/api/rosters/select', (req, res) => {
     try {
-        const { captainId, playerId, teamId, eventId } = req.body;
+        const {captainId, playerId, teamId, eventId} = req.body;
+        // Validate required fields with isIntNotNullNotUndefined helper function
+        if (!isValidId(captainId) || !isValidId(playerId) || !isValidId(teamId) || !isValidId(eventId)) return res.status(400).json({ error: 'captainId, playerId, teamId and eventId do not have valid types' });
 
-        // Validate required fields
-        if (captainId === undefined || playerId === undefined || teamId === undefined || eventId === undefined) {
-            return res.status(400).json({ error: 'captainId, playerId, teamId and eventId are required' });
-        }
-         let result = selectPlayerForRoster(captainId, playerId, teamId, eventId);
-        res.status(201).json({ 
-    message: 'Player added successfully to roster', 
-    data: result 
-});
+        let result = selectPlayerForRoster(Number(captainId), Number(playerId), Number(teamId), Number(eventId));
+        res.status(201).json({
+            message: 'Player added successfully to roster',
+            data: result
+        });
     }
     catch (error) {
         res.status(400).json({ error: error.message });
 
     }
 });
+// POST: Remove a player from the team
+app.post('/api/teams/kick', (req, res) => {
+    try {
+                const {captainId, playerId, teamId} = req.body;
+
+        // Validate required fields with isIntNotNullNotUndefined helper function
+        if (!isValidId(captainId) || !isValidId(playerId) || !isValidId(teamId)) return res.status(400).json({ error: 'captainId, playerId, teamId do not have valid types' });
+        kickMember(Number(captainId), Number(playerId), Number(teamId));
+        res.status(200).json({
+            message: 'Player successfully removed from the team'
+        });
+    }
+    catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+// POST: Remove a player from rosters
+app.post('/api/rosters/kick', (req, res) => {
+    try {
+                const {captainId, playerId, teamId, eventId} = req.body;
+
+
+
+        // Validate required fields with isIntNotNullNotUndefined helper function
+        if (!isValidId(captainId) || !isValidId(playerId) || !isValidId(teamId) || !isValidId(eventId)) return res.status(400).json({ error: 'captainId, playerId, teamId and eventId do not have valid types' });
+        kickRoster(Number(captainId), Number(playerId), Number(teamId), Number(eventId));
+        res.status(200).json({
+            message: 'Player successfully removed from the rosters'
+        });
+    }
+    catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 
 app.post('/api/database/insert/:securityKey', async (req, res) => {
 
     try {
-        const secuityKey = parseInt(req.params.securityKey);
-        if(secuityKey !== 321) return res.status(401).json({error: `Unauthorized access!`});
+        //I used parseInt to make whatever input is to number. But what if my key is string so I don't need partsInt
+        //const secuityKey = parseInt(req.params.securityKey);
+        if (req.params.securityKey !== process.env.SEED_SECURITY_KEY) return res.status(401).json({ error: `Unauthorized access!` });
         await seedAllData();
-        res.status(200).json({message: `All json files got insert to database.`});
+        res.status(200).json({ message: `All json files got insert to database.` });
 
     }
     catch (error) {
@@ -170,9 +198,13 @@ app.post('/api/database/insert/:securityKey', async (req, res) => {
 
 });
 
-
-
 // Start server
 app.listen(PORT, () => {
     console.log(`FindMatch API running at http://localhost:${PORT}`);
+});
+
+process.on('SIGINT', () => {
+    console.log('Shutting down gracefully...');
+    closeDB();
+    process.exit(0);
 });

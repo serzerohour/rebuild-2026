@@ -1,7 +1,7 @@
-import { loadData, saveData } from "./fileService.js";
-import { DATA_PATH } from "../config.js";
 import { getDB } from "../db/dbConnect.js";
+import { getAnEntityById } from "../utils/db_helper.js";
 
+/*
 const getEventRosterWithDetailsJson = async (eventId) => {
 
     const event = await getEventData(eventId);
@@ -32,6 +32,16 @@ const getEventRosterWithDetailsJson = async (eventId) => {
     };
 
 }
+    const getEventDataJson = async (eventId) => {
+    const allEvents = await loadData(DATA_PATH.events);
+    const eventData = allEvents.find(aE => aE.eventId === eventId);
+    if (eventData === undefined) {
+        throw new Error("No such event with that specified id");
+    }
+    return eventData;
+}
+
+    */
 const getEventRosterWithDetails = (eventId) => {
     const db = getDB();
     let event = getEventWithId(eventId);
@@ -48,24 +58,8 @@ const getEventRosterWithDetails = (eventId) => {
 
 const getEventWithId = (eventId) =>{
     const db = getDB();
-    let event = db.prepare(`
-        SELECT * FROM events
-        WHERE eventId = ?
-        `).get(eventId);
-    if(event === undefined) throw new Error("No such event with that specified id");
-    return event;  
+    return getAnEntityById(db,eventId,"events");
 
 };
 
-const getEventData = async (eventId) => {
-    const allEvents = await loadData(DATA_PATH.events);
-    const eventData = allEvents.find(aE => aE.eventId === eventId);
-    if (eventData === undefined) {
-        throw new Error("No such event with that specified id");
-    }
-    return eventData;
-
-}
-
-
-export { getEventRosterWithDetails };
+export { getEventRosterWithDetails, getEventWithId };

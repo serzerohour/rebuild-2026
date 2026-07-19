@@ -1,8 +1,55 @@
-import { loadData, saveData } from "./fileService.js";
-import { DATA_PATH } from "../config.js";
 import { getDB } from '../db/dbConnect.js';
-//import { delay, isEmptyArray } from "../utils/helper.js"
+import { isCaptain, isMemberOfTeam, getAnEntityById, getAllEntity } from '../utils/db_helper.js';
 
+const getTeamById = (teamId) => {
+    const db = getDB();
+    return getAnEntityById(db, teamId, "teams");
+};
+const getAllTeams = () => {
+    const db = getDB();
+    return getAllEntity(db, "teams");
+};
+
+const getTeamWithMembers = (teamId) => {
+    const db = getDB();
+    let team = getTeamById(teamId);
+    let teamMembers = db.prepare(`
+        SELECT p.playerId, p.playerName, p.playerEmail
+        FROM memberships m
+        INNER JOIN players p ON p.playerId = m.playerId
+        WHERE m.teamId = ? AND m.left_at IS NULL
+        `);
+    teamMembers = teamMembers.all(teamId);
+    if (teamMembers.length === 0) {
+        throw new Error("There are no players within this team");
+    }
+    return { ...team, members: teamMembers };
+
+};
+
+const kickMember = (captainId, playerId, teamId) => {
+    const db = getDB();
+    // Does this team exist ?
+    getTeamById(teamId);
+    // Is captainId really the captain of team?
+    isCaptain(db, captainId, teamId);
+    // Is the unfortunate playerId member of the team?
+    isMemberOfTeam(db, playerId, teamId);
+
+    // Remove(update) the player from team by going into memberships table
+    let statement = db.prepare(`
+        UPDATE memberships
+        SET left_at = CURRENT_TIMESTAMP
+        WHERE playerId = @varPlayerId AND teamId = @varTeamId
+        `);
+    let updateResult = statement.run({ varPlayerId: playerId, varTeamId: teamId });
+    if(updateResult.changes !== 1) throw new Error("Failed to remove player from the team.");    
+
+};
+
+export { getTeamById, getTeamWithMembers, getAllTeams, kickMember };
+
+/*
 const getTeamByIdJson = async (teamId) => {
     const allTeams = await loadData(DATA_PATH.teams);
     const teamData = allTeams.find(aT => aT.teamId === teamId);
@@ -12,17 +59,6 @@ const getTeamByIdJson = async (teamId) => {
     return teamData;
 
 };
-const getTeamById = (teamId) => {
-    const db = getDB();
-    let team = db.prepare(`
-        SELECT * FROM teams
-        WHERE teamId = ?
-        `);
-    team = team.get(teamId);
-    if (team === undefined) throw new Error("No such team with that specific Id");
-    else return team;    
-};
-
 const getTeamWithMembersJson = async (teamId) => {
     // your code here
     await getTeamById(teamId);
@@ -36,40 +72,8 @@ const getTeamWithMembersJson = async (teamId) => {
     return teamMembers;
 
 };
-const getTeamWithMembers = (teamId) => {
-    // your code here
-    let team = getTeamById(teamId);
-    const db = getDB();
-    let teamMembers = db.prepare(`
-        SELECT p.playerId, p.playerName, p.playerEmail
-        FROM memberships m
-        INNER JOIN players p ON p.playerId = m.playerId
-        WHERE m.teamId = ? AND m.left_at IS NULL
-        `);
-    teamMembers = teamMembers.all(teamId);  
-     if (teamMembers.length === 0) {
-        throw new Error("There are no players within this team");
-    }    
-    return {...team, members: teamMembers};
-
-};
-
 
 const getAllTeamsWithJson = async () => {
     return await loadData(DATA_PATH.teams);
 };
-// db.get() returns only 1 row but all() returns all result
-const getAllTeams = () => {
-    const db = getDB();
-    let allTeams =  db.prepare(
-        'SELECT * FROM teams'
-    );
-    allTeams = allTeams.all();
-    if (allTeams.length === 0) {
-        throw new Error("There no teams in the database yet!");
-    }
-    return allTeams;
-
-};
-
-export { getTeamById, getTeamWithMembers, getAllTeams };
+*/

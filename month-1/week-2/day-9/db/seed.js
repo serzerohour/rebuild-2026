@@ -14,7 +14,7 @@ export const seedAllData = async () => {
     const rosters = await loadData(DATA_PATH.rosters);
 
     const insertPlayerStatement = db.prepare(`
-        INSERT INTO players (playerId, playerName, playerEmail, created_at)
+        INSERT OR IGNORE INTO players (playerId, playerName, playerEmail, created_at)
         VALUES (?, ?, ?, CURRENT_TIMESTAMP)
         `);
 
@@ -23,7 +23,7 @@ export const seedAllData = async () => {
     }
 
     const insertTeamStatement = db.prepare(`
-        INSERT INTO teams (teamId, teamName, teamCaptainId, created_at)
+        INSERT OR IGNORE INTO teams (teamId, teamName, teamCaptainId, created_at)
         VALUES (?, ?, ?, CURRENT_TIMESTAMP)
         `);
     for (const team of teams) {
@@ -31,7 +31,7 @@ export const seedAllData = async () => {
     }
 
     const insertGameStatement = db.prepare(`
-        INSERT INTO games (gameId, gameName, created_at)
+        INSERT OR IGNORE INTO games (gameId, gameName, created_at)
         VALUES (?, ?, CURRENT_TIMESTAMP)
         `);
 
@@ -40,7 +40,7 @@ export const seedAllData = async () => {
     }
 
     const insertEventStatement = db.prepare(`
-        INSERT INTO events (eventId, eventName, gameId, eventEligibleParticipants, created_at)
+        INSERT OR IGNORE INTO events (eventId, eventName, gameId, eventEligibleParticipants, created_at)
         VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
         `);
 
@@ -49,7 +49,7 @@ export const seedAllData = async () => {
     }    
 
     const insertMembershipStatement = db.prepare(`
-        INSERT INTO memberships (membershipId, playerId, teamId, joined_at, left_at )
+        INSERT OR IGNORE INTO memberships (membershipId, playerId, teamId, joined_at, left_at )
         VALUES (?, ?, ?, ?, ?)
         `);
     for (const membership of memberships) {
@@ -57,7 +57,7 @@ export const seedAllData = async () => {
     }    
 
     const insertRosterStatement = db.prepare(`
-        INSERT INTO rosters (rosterId, playerId, teamId, eventId, registered_at, withdrawn_at)
+        INSERT OR IGNORE INTO rosters (rosterId, playerId, teamId, eventId, registered_at, withdrawn_at)
         VALUES (?, ?, ?, ?, ?, ?)
         `);
     for (const roster of rosters) {
